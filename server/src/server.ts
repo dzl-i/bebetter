@@ -8,6 +8,11 @@ import { PrismaClient } from '@prisma/client';
 import { Server } from 'http';
 
 
+// Route imports
+import { authRegister } from './auth/register';
+import { authLogin } from './auth/login';
+
+
 const prisma = new PrismaClient()
 
 
@@ -34,6 +39,42 @@ app.get('/', (req: Request, res: Response) => {
   return res.status(200).json({
     message: "Server is up!"
   });
+});
+
+
+// AUTH ROUTES
+app.post('/auth/register', async (req: Request, res: Response) => {
+  try {
+    const { name, email, password, username } = req.body;
+    const { token, userId, userName, userUsername } = await authRegister(name, email, password, username);
+
+    // Assign cookies
+    res.cookie('token', token, { httpOnly: isProduction, path: "/", secure: isProduction, sameSite: isProduction ? "none" : "lax", maxAge: 7776000000 });
+
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    res.status(200).json({ userId: userId, name: userName, username: userUsername });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/auth/login', async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const { token, userId, userUsername, userName } = await authLogin(email, password);
+
+    // Assign cookies
+    res.cookie('token', token, { httpOnly: isProduction, path: "/", secure: isProduction, sameSite: isProduction ? "none" : "lax", maxAge: 7776000000 });
+
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    res.status(200).json({ userId: userId, username: userUsername, name: userName });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
 });
 
 
