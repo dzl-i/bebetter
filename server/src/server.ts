@@ -107,7 +107,8 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
 // PROFILE ROUTES
 app.post('/profile/profile-picture', async (req: Request, res:Response) => {
   try {
-    const { userId, profilePicture } = req.body;
+    const userId = res.locals.userId;
+    const { profilePicture } = req.body;
     await updateProfilePicture(userId, profilePicture);
 
     res.status(200);
@@ -119,7 +120,8 @@ app.post('/profile/profile-picture', async (req: Request, res:Response) => {
 
 app.post('/profile/description', async (req: Request, res:Response) => {
   try {
-    const { userId, description } = req.body;
+    const userId = res.locals.userId;
+    const { description } = req.body;
     await updateProfileDescription(userId, description);
 
     res.status(200);
