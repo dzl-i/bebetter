@@ -20,6 +20,10 @@ const links = [
     path: "/signup",
     label: "Sign Up",
   },
+  {
+    path: "/user",
+    label: "Profile",
+  },
 ];
 
 export default function Navbar() {
