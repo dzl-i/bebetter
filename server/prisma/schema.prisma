@@ -11,12 +11,44 @@ datasource db {
 }
 
 model User {
-    id                     String @id @default(uuid())
+    id                     String    @id @default(uuid())
     name                   String
-    username               String
-    email                  String @unique
+    username               String    @unique
+    email                  String    @unique
     password               String
-    description            String @default("")
-    token                  String @default("")
-    remainingLoginAttempts Int    @default(3)
+    description            String?
+    token                  String?
+    remainingLoginAttempts Int       @default(3)
+    averageSteps           Float?
+    posts                  Post[]
+    comments               Comment[]
+}
+
+model Post {
+    id          String    @id @default(uuid())
+    description String
+    timeCreated DateTime  @default(now())
+    steps       Int
+    author      User      @relation(fields: [authorId], references: [id])
+    authorId    String
+    comments    Comment[]
+    reacts      React[]
+}
+
+model React {
+    id     String @id @default(uuid())
+    name   String
+    count  Int    @default(0)
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String
+}
+
+model Comment {
+    id          String   @id @default(uuid())
+    comment     String
+    timeCreated DateTime @default(now())
+    post        Post     @relation(fields: [postId], references: [id])
+    postId      String
+    user        User     @relation(fields: [userId], references: [id])
+    userId      String
 }
