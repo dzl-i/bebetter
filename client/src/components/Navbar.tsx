@@ -11,12 +11,14 @@ const links = [
   {
     path: "/post",
     label: "Make a new Post",
-    icon: <Plus className="w-8 h-8" />,
   },
   {
     path: "/calorie",
     label: "Steps Calculator",
-    icon: <TrendingUp className="w-8 h-8" />,
+  },
+  {
+    path: "/signup",
+    label: "Sign Up",
   },
 ];
 

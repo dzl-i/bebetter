@@ -36,8 +36,12 @@ export default function Post({ showImage }: { showImage?: boolean }) {
       )}
       <p className="text-sm opacity-50">19 Oct 2024</p>
       <div className="flex items-center gap-4">
-        <Image src="/reaction.svg" alt="React" width={32} height={32} />
-        <Image src="/comment.svg" alt="Comment" width={40} height={40} />
+        <button>
+          <Image src="/reaction.svg" alt="React" width={32} height={32} />
+        </button>
+        <button>
+          <Image src="/comment.svg" alt="Comment" width={40} height={40} />
+        </button>
       </div>
     </div>
   );
