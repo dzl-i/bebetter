@@ -20,7 +20,7 @@ export default function Calorie() {
       </div>
       <button
         form="calorie-form"
-        className="calorie-form-button transition-all flex items-center px-12 py-4 bg-black rounded-2xl opacity-90 z-10"
+        className="form-button transition-all flex items-center px-12 py-4 bg-black rounded-2xl opacity-90 z-10"
       >
         <span className="text-white text-2xl font-bold">Yum</span>
         <div className="w-8 h-8 ml-3 relative">

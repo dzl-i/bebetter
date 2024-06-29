@@ -62,7 +62,7 @@ body {
       margin-bottom: var(--gap);
     }
   }
-  .calorie-form-button {
+  .form-button {
     transition: all;
     transition-duration: 200ms;
     &:hover {
