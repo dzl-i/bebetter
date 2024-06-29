@@ -2,10 +2,12 @@
 
 import { post } from "@/utils/request";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 import validator from "validator";
 
 export default function Register() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -20,11 +22,11 @@ export default function Register() {
     e.preventDefault();
     const res = await post("/auth/register", {
       name,
-      username,
       email,
       password,
+      username,
     });
-    console.log(res);
+    router.push("/");
   };
 
   return (
