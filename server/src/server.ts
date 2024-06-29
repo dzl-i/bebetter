@@ -39,7 +39,7 @@ const httpServer = new Server(app);
 
 // Use middleware that allows for access from other domains
 app.use(cors({
-  origin: ["http://localhost:3001"],
+  origin: ["http://localhost:3001", "https://bebetter.denzeliskandar.com"],
   credentials: true
 }));
 
