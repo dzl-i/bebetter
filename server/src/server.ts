@@ -24,6 +24,7 @@ import { postDelete } from './posts/delete';
 import { postListAll } from './posts/listAll';
 import { postListUser } from './posts/listUser';
 import { postComment } from './posts/comment';
+import { postReact } from './posts/react';
 
 const prisma = new PrismaClient()
 
@@ -149,6 +150,19 @@ app.post('/posts/comment', authenticateToken, async (req: Request, res: Response
     await postComment(userId, postId, comment);
 
     res.status(200).json({ message: "Successfully added comment!" });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/posts/react', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { postId, reactName } = req.body;
+    await postReact(userId, postId, reactName);
+
+    res.status(200).json({ message: "Successfully added a reaction!" });
   } catch (error: any) {
     console.error(error);
     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
