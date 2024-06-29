@@ -30,4 +30,36 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .menu-overlay {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  }
+  .menu-copy {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16rem 0 0 1.5rem;
+  }
+  .menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 2em;
+    background: #000000;
+    z-index: 2;
+    display: flex;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  }
+  .masonry-layout {
+    --gap: clamp(1rem, 5vmin, 2rem);
+    gap: var(--gap);
+    margin: 1rem auto;
+    columns: 320px;
+    & > * {
+      break-inside: avoid;
+      margin-bottom: var(--gap);
+    }
+  }
 }
