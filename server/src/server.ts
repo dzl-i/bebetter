@@ -1,22 +1,29 @@
 // Server imports
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import errorHandler from 'middleware-http-errors';
 import cors from 'cors';
 import 'dotenv/config';
+import cookieParser from 'cookie-parser';
 import { PrismaClient } from '@prisma/client';
 import { Server } from 'http';
-import { getNutrientData } from './helper/converter';
-
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 // Route imports
 import { authRegister } from './auth/register';
 import { authLogin } from './auth/login';
+import { getNutrientData, getSteps } from './helper/converter';
 import { updateProfilePicture } from './profile/updateProfilePicture';
 import { updateProfileDescription } from './profile/updateProfileDescription';
 import { retrieveUserPosts } from './profile/retrieveUserPosts';
 import { retrieveProfileInfo } from './profile/retrieveProfileInfo';
 import { updateProfileName } from './profile/updateProfileName';
+import { postCreate } from './posts/create';
+import { postDelete } from './posts/delete';
+import { postListAll } from './posts/listAll';
+import { postListUser } from './posts/listUser';
+import { postComment } from './posts/comment';
+import { postReact } from './posts/react';
 
 const prisma = new PrismaClient()
 
@@ -24,6 +31,8 @@ const prisma = new PrismaClient()
 // Set up web app using JSON
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
 
 const httpServer = new Server(app);
 
@@ -81,22 +90,102 @@ app.post('/auth/login', async (req: Request, res: Response) => {
   }
 });
 
+
+// POSTS ROUTES
+app.post('/posts/create', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { description, steps, picture } = req.body;
+    const post = await postCreate(userId, description, steps, picture);
+
+    res.status(200).json({ postId: post.id, description: post.description, steps: post.steps, timeCreated: post.timeCreated });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/posts/delete', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { postId } = req.body;
+    await postDelete(userId, postId);
+
+    res.status(200).json({ message: "Successfully deleted post!" });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/posts/list-all', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const posts = await postListAll(userId);
+
+    res.status(200).json({ posts: posts });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/posts/list-user', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const posts = await postListUser(userId);
+
+    res.status(200).json({ posts: posts });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/posts/comment', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { postId, comment } = req.body;
+    await postComment(userId, postId, comment);
+
+    res.status(200).json({ message: "Successfully added comment!" });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/posts/react', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { postId, reactName } = req.body;
+    await postReact(userId, postId, reactName);
+
+    res.status(200).json({ message: "Successfully added a reaction!" });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+
+// CALORIE ROUTES
 app.get('/calculateCalorie', async (req: Request, res: Response) => {
   try {
     const { food, quantity } = req.body;
     if (!Number.isInteger(quantity)) {
-      throw new Error("incorrect inputs - please input food as a strig and quantity as an int")
+      throw new Error("incorrect inputs - please input food as a strig and quantity as an int");
     }
     const info = JSON.stringify(await getNutrientData(food));
-    const name: any = info.match(food)
-    var calories: any = info.match('calories.+?[0-9]+')
-    calories = Number(calories.toString().slice(10))
-    const total_cals = quantity * calories
+    const name: any = info.match(food);
+    var calories: any = info.match('calories.+?[0-9]+');
+    calories = Number(calories.toString().slice(10));
+    const total_cals = quantity * calories;
     const information = {
       food_name: name.toString(),
       item_calories: calories,
       quantity: quantity,
-      total_calories:  total_cals
+      total_calories: total_cals
     }
     return res.status(200).json(information);
   } catch (error: any) {
@@ -104,9 +193,26 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/steps', async (req: Request, res: Response) => {
+  try {
+    const { activity } = req.body;
+    const stepsInformation: any = await getSteps(activity);
+    const first_activity = stepsInformation[0]
+    const second_activity = stepsInformation[1]
+    const third_activity = stepsInformation[2]
+    const information = {
+      first_activity: first_activity,
+      second_activity: second_activity,
+      third_activity: third_activity
+    }
+    return res.status(200).json(information)
+  } catch (error: any) {
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
 
 // PROFILE ROUTES
-app.post('/profile/name', async (req: Request, res:Response) => {
+app.put('/profile/name', authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
     const { name } = req.body;
@@ -119,7 +225,7 @@ app.post('/profile/name', async (req: Request, res:Response) => {
   }
 });
 
-app.post('/profile/picture', async (req: Request, res:Response) => {
+app.put('/profile/picture', authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
     const { profilePicture } = req.body;
@@ -132,7 +238,7 @@ app.post('/profile/picture', async (req: Request, res:Response) => {
   }
 });
 
-app.post('/profile/description', async (req: Request, res:Response) => {
+app.post('/profile/description', authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
     const { description } = req.body;
@@ -145,7 +251,7 @@ app.post('/profile/description', async (req: Request, res:Response) => {
   }
 });
 
-app.get('/profile/posts', async (req: Request, res:Response) => {
+app.get('/profile/posts', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
     const posts = await retrieveUserPosts(userId as string);
@@ -157,7 +263,7 @@ app.get('/profile/posts', async (req: Request, res:Response) => {
   }
 });
 
-app.get('/profile/info', async (req: Request, res:Response) => {
+app.get('/profile/info', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
     const profileInfo = retrieveProfileInfo(userId as string);
@@ -168,6 +274,7 @@ app.get('/profile/info', async (req: Request, res:Response) => {
     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
   }
 });
+
 
 // Logging errors
 app.use(morgan('dev'));
@@ -183,3 +290,33 @@ const server = httpServer.listen(PORT, () => {
 process.on('SIGINT', () => {
   server.close(() => console.log('Shutting down server gracefully.'));
 });
+
+
+/* ---------------------------- HELPER FUNCTIONS ---------------------------- */
+async function authenticateToken(req: Request, res: Response, next: NextFunction) {
+  const { token } = req.cookies;
+
+  if (!token) return res.status(401).json({ error: "No token provided." });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    if (decoded && decoded.userId) {
+      const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+
+      if (!user) {
+        return res.status(403).json({ error: "User not found." });
+      }
+
+      if (user.remainingLoginAttempts <= 0) {
+        return res.status(403).json({ error: "User is blocked." });
+      }
+
+      res.locals.userId = decoded.userId;
+      next();
+    } else {
+      res.status(403).json({ error: "Invalid token." });
+    }
+  } catch (err) {
+    res.status(403).json({ error: "Invalid token." });
+  }
+}
