@@ -36,19 +36,12 @@ export default function Home() {
     false,
   ];
   return (
-    <main className="p-8 bg-main min-h-screen isolate">
-      <div className="fixed z-10">
-        <Navbar />
-      </div>
-      <div className="mt-24 z-0" ref={container}>
-        <div className="masonry-layout">
-          {postArr.map((show, index) => (
-            <div key={index}>
-              <Post key={index} showImage={show ? true : false} />
-            </div>
-          ))}
+    <div className="masonry-layout">
+      {postArr.map((show, index) => (
+        <div key={index}>
+          <Post key={index} showImage={show ? true : false} />
         </div>
-      </div>
-    </main>
+      ))}
+    </div>
   );
 }

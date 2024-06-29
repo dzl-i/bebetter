@@ -38,7 +38,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16rem 0 0 1.5rem;
+    padding: 10rem 0 0 1.5rem;
   }
   .menu-overlay {
     position: fixed;
@@ -60,6 +60,15 @@ body {
     & > * {
       break-inside: avoid;
       margin-bottom: var(--gap);
+    }
+  }
+  .calorie-form-button {
+    transition: all;
+    transition-duration: 200ms;
+    &:hover {
+      box-shadow:
+        2px 2px 0px 0px #d7ef1c,
+        4px 4px 0px 0px #202404;
     }
   }
 }
