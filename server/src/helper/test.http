@@ -1,0 +1,7 @@
+get http://localhost:3000/calculateCalorie
+content-type: application/json
+
+{
+    "food": 5,
+    "quantity": 4
+}
