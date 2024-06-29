@@ -30,6 +30,7 @@ model Post {
     description String
     timeCreated DateTime  @default(now())
     steps       Int
+    picture     String?
     author      User      @relation(fields: [authorId], references: [id])
     authorId    String
     comments    Comment[]
