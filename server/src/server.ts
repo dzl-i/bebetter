@@ -6,6 +6,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { Server } from 'http';
+import { getNutrientData } from './helper/converter';
 
 
 // Route imports
@@ -41,7 +42,6 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-
 // AUTH ROUTES
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
@@ -73,6 +73,29 @@ app.post('/auth/login', async (req: Request, res: Response) => {
     res.status(200).json({ userId: userId, username: userUsername, name: userName });
   } catch (error: any) {
     console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/calculateCalorie', async (req: Request, res: Response) => {
+  try {
+    const { food, quantity } = req.body;
+    if (!Number.isInteger(quantity)) {
+      throw new Error("incorrect inputs - please input food as a strig and quantity as an int")
+    }
+    const info = JSON.stringify(await getNutrientData(food));
+    const name: any = info.match(food)
+    var calories: any = info.match('calories.+?[0-9]+')
+    calories = Number(calories.toString().slice(10))
+    const total_cals = quantity * calories
+    const information = {
+      food_name: name.toString(),
+      item_calories: calories,
+      quantity: quantity,
+      total_calories:  total_cals
+    }
+    return res.status(200).json(information);
+  } catch (error: any) {
     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
   }
 });
