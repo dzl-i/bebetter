@@ -1,7 +1,9 @@
 "use client";
 
+import Loading from "@/components/Loading";
 import { post } from "@/utils/request";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 import validator from "validator";
@@ -12,6 +14,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const readyToSubmit = useMemo(
     () => name && validator.isEmail(email) && username && password,
@@ -20,25 +23,19 @@ export default function Register() {
 
   const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const userData = {
+    setLoading(true);
+    const res = await post("/auth/register", {
       name,
       email,
       password,
       username,
-    };
-
-    // Send the userData to using fetch
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
     });
-
-    console.log(res);
-    router.push("/");
+    setLoading(false);
+    if (!res.errorCode) {
+      router.push("/");
+      return;
+    }
+    alert(res.errorMessage);
   };
 
   return (
@@ -107,13 +104,25 @@ export default function Register() {
           />
         </div>
         <button
-          className="text-center w-full py-4 bg-black text-white form-button rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:text-white/25"
+          className="text-center w-full py-4 bg-black text-white form-button rounded-lg cursor-pointer disabled:bg-transparent disabled:border disabled:border-black disabled:text-black disabled:cursor-not-allowed disabled:opacity-50"
           type="submit"
           disabled={!readyToSubmit}
         >
-          REGISTER
+          {loading ? (
+            <div className="invert flex items-center justify-center">
+              <Loading width={24} height={24} />
+            </div>
+          ) : (
+            "REGISTER"
+          )}
         </button>
       </form>
+      <p>
+        Already have an account?{" "}
+        <Link className="underline" href="/login">
+          Login
+        </Link>
+      </p>
     </div>
   );
 }

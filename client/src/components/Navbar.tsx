@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
-import Image from "next/image";
 import { gsap, TimelineLite } from "gsap";
-import { Menu, Plus, TrendingUp, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const links = [
   {

@@ -2,7 +2,6 @@ const request = async (
   path: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
   options?: Record<string, any>,
-  headers?: Record<string, any>
 ) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3030";
   const url = `${baseUrl}${path}`;
@@ -11,18 +10,19 @@ const request = async (
     method === "GET"
       ? {
           method,
-          headers,
+          credentials: "include",
         }
       : {
           method,
+          credentials: "include",
           headers: {
             "Content-type": "application/json",
-            ...headers,
           },
           body: JSON.stringify(options),
         };
   try {
-    const res = await fetch(url, { ...payload, cache: "no-store" });
+    // @ts-ignore
+    const res: any = await fetch(url, { ...payload, cache: "no-store" });
     if (!res.ok) {
       return { errorCode: res.status, errorMessage: res.statusText };
     }
@@ -34,24 +34,20 @@ const request = async (
 
 export const get = (
   path: string,
-  options?: Record<string, any>,
-  headers?: Record<string, any>
-) => request(path, "GET", options, headers);
+  options?: Record<string, any>
+) => request(path, "GET", options);
 
 export const post = (
   path: string,
-  options?: Record<string, any>,
-  headers?: Record<string, any>
-) => request(path, "POST", options, headers);
+  options?: Record<string, any>
+) => request(path, "POST", options);
 
 export const put = (
   path: string,
-  options?: Record<string, any>,
-  headers?: Record<string, any>
-) => request(path, "PUT", options, headers);
+  options?: Record<string, any>
+) => request(path, "PUT", options);
 
 export const del = (
   path: string,
-  options?: Record<string, any>,
-  headers?: Record<string, any>
-) => request(path, "DELETE", options, headers);
+  options?: Record<string, any>
+) => request(path, "DELETE", options);

@@ -18,11 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="p-8 bg-main flex w-full justify-center min-h-screen">
+        <main className="p-8 bg-main text-black flex w-full justify-center min-h-screen">
           <div className="fixed z-10">
             <Navbar />
           </div>
-          <div className="mt-24 z-0 block">{children}</div>
+          <div className="mt-24 z-0">{children}</div>
         </main>
       </body>
     </html>

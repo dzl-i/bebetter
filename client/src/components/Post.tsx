@@ -1,47 +1,45 @@
+import { PostType } from "@/utils/types";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function Post({ showImage }: { showImage?: boolean }) {
+export default function Post({ post }: { post: PostType }) {
   return (
-    <div className="text-black space-y-4 w-full min-w-[320px] bg-white rounded-lg px-7 py-6 border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]">
+    <div className="block text-black space-y-4 w-full min-w-[320px] bg-white rounded-lg px-7 py-6 border border-black shadow-[2px_2px_0_rgb(0,_0,_0)] transition-all duration-200 hover:shadow-[4px_4px_0_rgb(0,_0,_0)]">
       <div className="flex items-center gap-4">
-        <Image
-          className="rounded-full"
-          src="/minecraft.png"
-          alt="Something!"
+        <img
+          className="rounded-full object-cover"
+          src={post.author.profilePicture}
+          alt={`${post.author.name} profile picture`}
           width={48}
           height={48}
-          objectFit="cover"
         />
         <div>
-          <p className="font-bold">Full name</p>
-          <p>@username</p>
+          <p className="font-bold">{post.author.name}</p>
+          <p>{post.author.username}</p>
         </div>
       </div>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi auctor
-        placerat urna eget semper. Sed laoreet justo varius ligula aliquet, sit
-        amet iaculis felis molestie. Nam iaculis fermentum erat, volutpat
-        placerat libero porttitor ac. Aenean mollis sagittis arcu eget
-        tincidunt.
-      </p>
-      {showImage && (
-        <Image
-          alt="oop"
-          src="/minecraft.png"
-          width={320}
-          height={180}
-          objectFit="cover"
-          className="w-full h-auto rounded-md"
-        />
-      )}
-      <p className="text-sm opacity-50">19 Oct 2024</p>
+      <Link href={`/post/${post.id}`} className="block space-y-4">
+        <p>{post.description}</p>
+        {post.picture && (
+          <img
+            alt="Post img"
+            src={post.picture}
+            width={320}
+            height={180}
+            className="w-full h-auto rounded-md object-cover"
+          />
+        )}
+        <p className="text-sm opacity-50">
+          {new Date(post.timeCreated).toLocaleDateString()}
+        </p>
+      </Link>
       <div className="flex items-center gap-4">
         <button>
           <Image src="/reaction.svg" alt="React" width={32} height={32} />
         </button>
-        <button>
+        <Link href={`/post/${post.id}`} className="block">
           <Image src="/comment.svg" alt="Comment" width={40} height={40} />
-        </button>
+        </Link>
       </div>
     </div>
   );

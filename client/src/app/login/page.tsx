@@ -1,7 +1,9 @@
 "use client";
 
+import Loading from "@/components/Loading";
 import { post } from "@/utils/request";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 import validator from "validator";
@@ -10,6 +12,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const readyToSubmit = useMemo(
     () => validator.isEmail(email) && password,
@@ -18,13 +21,20 @@ export default function Login() {
 
   const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const res = await post("/auth/login", {
       email,
       password,
     });
     console.log(res);
-    router.push("/");
+    setLoading(false);
+    if (!res.errorCode) {
+      router.push("/");
+      return;
+    }
+    alert(res.errorMessage);
   };
+
   return (
     <div className="relative h-full flex flex-col justify-center items-center gap-4 text-black">
       <div className="flex gap-4 items-center">
@@ -67,13 +77,25 @@ export default function Login() {
           />
         </div>
         <button
-          className="text-center w-full py-4 bg-black text-white form-button rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:text-white/25"
+          className="text-center w-full py-4 bg-black text-white form-button rounded-lg cursor-pointer disabled:bg-transparent disabled:border disabled:border-black disabled:text-black disabled:cursor-not-allowed disabled:opacity-50"
           type="submit"
           disabled={!readyToSubmit}
         >
-          LOGIN
+          {loading ? (
+            <div className="invert flex items-center justify-center">
+              <Loading width={24} height={24} />
+            </div>
+          ) : (
+            "LOGIN"
+          )}
         </button>
       </form>
+      <p>
+        Don't have an account?{" "}
+        <Link className="underline" href="/login">
+          Register
+        </Link>
+      </p>
     </div>
   );
 }

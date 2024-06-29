@@ -7,13 +7,12 @@ export default function PostPage() {
       <div className="flex-1 top-32 static md:max-h-[calc(100vh_-_13rem)] bg-white overflow-y-scroll no-scrollbar md:sticky rounded-lg border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]">
         <div className="text-black space-y-4 w-full min-w-[320px] px-7 py-6">
           <div className="flex items-center gap-4">
-            <Image
-              className="rounded-full"
+            <img
+              className="rounded-full object-cover"
               src="/minecraft.png"
               alt="Something!"
               width={48}
               height={48}
-              objectFit="cover"
             />
             <div>
               <p className="font-bold">Full name</p>
@@ -27,13 +26,12 @@ export default function PostPage() {
             erat, volutpat placerat libero porttitor ac. Aenean mollis sagittis
             arcu eget tincidunt.
           </p>
-          <Image
+          <img
             alt="oop"
             src="/minecraft.png"
             width={320}
             height={180}
-            objectFit="cover"
-            className="w-full h-auto rounded-md"
+            className="w-full h-auto rounded-md object-cover"
           />
           <p className="text-sm opacity-50">19 Oct 2024</p>
           <div className="flex items-center gap-4">
@@ -49,7 +47,7 @@ export default function PostPage() {
             className="flex gap-4 bg-white p-4 rounded-xl border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]"
             name="comment"
           >
-            <Image
+            <img
               src="/minecraft.png"
               alt="Profile picture"
               width={32}

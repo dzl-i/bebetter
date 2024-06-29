@@ -5,10 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Loading from "@/components/Loading";
 import { get } from "@/utils/request";
+import Post from "@/components/Post";
 
 export default function Home() {
   const container = useRef(null);
   const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
   useGSAP(
     () => {
       gsap.set(".post-card", { y: 20, opacity: 0 });
@@ -20,36 +22,34 @@ export default function Home() {
         stagger: 0.1,
       });
     },
-    { scope: container }
+    { dependencies: [posts], scope: container }
   );
 
   useEffect(() => {
     const getPosts = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/list-all`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(res);
-      setLoading(false);
+      const { posts: fetchedPosts } = await get("/posts/list-all");
+      setPosts(fetchedPosts);
     };
     getPosts();
   }, []);
 
+  useEffect(() => {
+    if (!posts) return;
+    setLoading(false);
+  }, [posts]);
+
   return (
     <>
       {loading ? (
-        <div ref={container} className="masonry-layout">
-          {/* {postArr.map((show, index) => (
-            <div className="post-card" key={index}>
-            <Post key={index} showImage={show ? true : false} />
-            </div>
-            ))} */}
-        </div>
-      ) : (
         <Loading />
+      ) : (
+        <div ref={container} className="w-[calc(100vw_-_4rem)] masonry-layout">
+          {posts.map((post: any, index) => (
+            <div className="post-card" key={index}>
+              <Post key={index} post={post} />
+            </div>
+          ))}
+        </div>
       )}
     </>
   );

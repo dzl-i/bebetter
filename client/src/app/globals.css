@@ -57,6 +57,7 @@ body {
     gap: var(--gap);
     margin: 1rem auto;
     columns: 320px;
+    flex: 1;
     & > * {
       break-inside: avoid;
       margin-bottom: var(--gap);
