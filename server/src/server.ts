@@ -11,7 +11,10 @@ import { Server } from 'http';
 // Route imports
 import { authRegister } from './auth/register';
 import { authLogin } from './auth/login';
-
+import { updateProfilePicture } from './profile/updateProfilePicture';
+import { updateProfileDescription } from './profile/updateProfileDescription';
+import { retrieveUserPosts } from './profile/retrieveUserPosts';
+import { retrieveProfileInfo } from './profile/retrieveProfileInfo';
 
 const prisma = new PrismaClient()
 
@@ -77,6 +80,55 @@ app.post('/auth/login', async (req: Request, res: Response) => {
   }
 });
 
+
+// PROFILE ROUTES
+app.post('/profile/profile-picture', async (req: Request, res:Response) => {
+  try {
+    const { userId, profilePicture } = req.body;
+    await updateProfilePicture(userId, profilePicture);
+
+    res.status(200);
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/profile/description', async (req: Request, res:Response) => {
+  try {
+    const { userId, description } = req.body;
+    await updateProfileDescription(userId, description);
+
+    res.status(200);
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/profile/posts', async (req: Request, res:Response) => {
+  try {
+    const { userId } = req.query;
+    const posts = await retrieveUserPosts(userId as string);
+
+    res.status(200).json({ posts: posts });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/profile/info', async (req: Request, res:Response) => {
+  try {
+    const { userId } = req.query;
+    const profileInfo = retrieveProfileInfo(userId as string);
+
+    res.status(200).json({ profileInfo: profileInfo });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
 
 // Logging errors
 app.use(morgan('dev'));
