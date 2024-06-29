@@ -22,13 +22,13 @@ const request = async (
           body: JSON.stringify(options),
         };
   try {
-      const res = await fetch(url, { ...payload, cache: "no-store" });
-      if (!res.ok) {
-          return { errorCode: res.status, errorMessage: res.statusText };
-        }
-        return await res.json();
-    } catch (err) {
-    return { errorCode: "500", errorMessage: err.message };
+    const res = await fetch(url, { ...payload, cache: "no-store" });
+    if (!res.ok) {
+      return { errorCode: res.status, errorMessage: res.statusText };
+    }
+    return await res.json();
+  } catch (err) {
+    return { errorCode: "500", errorMessage: "Uh oh! Something's wrong!" };
   }
 };
 

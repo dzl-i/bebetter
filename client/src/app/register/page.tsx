@@ -26,6 +26,7 @@ export default function Register() {
       password,
       username,
     });
+    console.log(res);
     router.push("/");
   };
 
