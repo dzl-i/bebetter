@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Post({ showImage }: { showImage?: boolean }) {
   return (
-    <div className="post text-black space-y-4 w-full min-w-[320px] bg-white rounded-lg px-7 py-6 border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]">
+    <div className="text-black space-y-4 w-full min-w-[320px] bg-white rounded-lg px-7 py-6 border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]">
       <div className="flex items-center gap-4">
         <Image
           className="rounded-full"

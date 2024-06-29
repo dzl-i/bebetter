@@ -4,8 +4,8 @@ import Image from "next/image";
 export default function PostPage() {
   return (
     <div className="flex flex-col md:flex-row gap-8">
-      <div className="flex-1 top-32 static md:max-h-[calc(100vh_-_13rem)] overflow-y-scroll no-scrollbar md:sticky rounded-lg border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]">
-        <div className="text-black space-y-4 w-full min-w-[320px] bg-white px-7 py-6">
+      <div className="flex-1 top-32 static md:max-h-[calc(100vh_-_13rem)] bg-white overflow-y-scroll no-scrollbar md:sticky rounded-lg border border-black shadow-[2px_2px_0_rgb(0,_0,_0)]">
+        <div className="text-black space-y-4 w-full min-w-[320px] px-7 py-6">
           <div className="flex items-center gap-4">
             <Image
               className="rounded-full"

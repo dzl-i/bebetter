@@ -17,8 +17,12 @@ const links = [
     label: "Steps Calculator",
   },
   {
-    path: "/signup",
-    label: "Sign Up",
+    path: "/register",
+    label: "Register",
+  },
+  {
+    path: "/login",
+    label: "Login",
   },
   {
     path: "/user",
@@ -70,7 +74,7 @@ export default function Navbar() {
       {/* menu-bar */}
       <div className="fixed top-0 left-0 w-full p-8 z-1">
         <div className="flex justify-between items-center bg-white text-black px-6 py-4 rounded-2xl border border-black shadow-[2px_2px_0_0_rgba(0,_0,_0)]">
-          <Link href="/" className="flex items-center gap-8 ">
+          <Link href="/" className="flex items-center gap-2 ">
             <Image src="logo.svg" alt="Logo" width={48} height={48} />
             <p className="font-bold text-xl">BeBetter</p>
           </Link>
@@ -110,7 +114,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   <Link
-                    className="text-main md:text-6xl text-4xl relative after:contents-[''] after:w-0 after:transition-all after:duration-200 hover:after:w-full after:h-1 after:absolute after:bottom-0 after:bg-main flex w-max items-center gap-8"
+                    className="text-main md:text-4xl text-2xl relative after:contents-[''] after:w-0 after:transition-all after:duration-200 hover:after:w-full after:h-1 after:absolute after:bottom-0 after:bg-main flex w-max items-center gap-8"
                     href={link.path}
                   >
                     {link.label}

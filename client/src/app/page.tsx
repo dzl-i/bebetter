@@ -1,18 +1,18 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import Post from "@/components/Post";
 import { useGSAP } from "@gsap/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import Loading from "@/components/Loading";
+import { get } from "@/utils/request";
 
 export default function Home() {
   const container = useRef(null);
+  const [loading, setLoading] = useState(true);
   useGSAP(
     () => {
-      gsap.set(".post", { y: 20, opacity: 0 });
-      gsap.to(".post", {
-        scrollTrigger: ".post",
+      gsap.set(".post-card", { y: 20, opacity: 0 });
+      gsap.to(".post-card", {
         y: 0,
         opacity: 1,
         duration: 1,
@@ -22,26 +22,29 @@ export default function Home() {
     },
     { scope: container }
   );
-  const postArr = [
-    true,
-    true,
-    false,
-    true,
-    true,
-    false,
-    false,
-    true,
-    false,
-    true,
-    false,
-  ];
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const res = await get("/posts/list-all");
+      console.log(res);
+      setLoading(false);
+    };
+    getPosts();
+  }, []);
+
   return (
-    <div className="masonry-layout">
-      {postArr.map((show, index) => (
-        <div key={index}>
-          <Post key={index} showImage={show ? true : false} />
+    <>
+      {loading ? (
+        <div ref={container} className="masonry-layout">
+          {/* {postArr.map((show, index) => (
+            <div className="post-card" key={index}>
+            <Post key={index} showImage={show ? true : false} />
+            </div>
+            ))} */}
         </div>
-      ))}
-    </div>
+      ) : (
+        <Loading />
+      )}
+    </>
   );
 }

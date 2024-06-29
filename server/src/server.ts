@@ -39,11 +39,11 @@ const httpServer = new Server(app);
 
 // Use middleware that allows for access from other domains
 app.use(cors({
-  origin: ["http://localhost:3001"],
+  origin: ["http://localhost:3000", "https://bebetter.denzeliskandar.com"],
   credentials: true
 }));
 
-const PORT: number = parseInt(process.env.PORT || '3000');
+const PORT: number = parseInt(process.env.PORT || '3030');
 const isProduction: boolean = process.env.NODE_ENV === "production"
 
 
@@ -283,7 +283,7 @@ app.use(errorHandler());
 
 // Start server
 const server = httpServer.listen(PORT, () => {
-  console.log(`⚡️ Server listening on port ${process.env.PORT || '3000'}`);
+  console.log(`⚡️ Server listening on port ${PORT}`);
 });
 
 // For coverage, handle Ctrl+C gracefully
