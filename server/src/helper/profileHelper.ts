@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function setProfilePicture(id: string, profilePicture: string) {
-   await prisma.user.update({
+  await prisma.user.update({
     where: {
       id: id,
     },
@@ -44,6 +44,8 @@ export async function getProfileInfo(id: string) {
       username: true,
       name: true,
       description: true,
+      averageSteps: true,
+      recentSteps: true,
     },
   });
 }
