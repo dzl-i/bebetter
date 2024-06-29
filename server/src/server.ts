@@ -9,11 +9,10 @@ import { PrismaClient } from '@prisma/client';
 import { Server } from 'http';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-
 // Route imports
 import { authRegister } from './auth/register';
 import { authLogin } from './auth/login';
-import { getNutrientData } from './helper/converter';
+import { getNutrientData, getSteps } from './helper/converter';
 import { updateProfilePicture } from './profile/updateProfilePicture';
 import { updateProfileDescription } from './profile/updateProfileDescription';
 import { retrieveUserPosts } from './profile/retrieveUserPosts';
@@ -175,13 +174,13 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
   try {
     const { food, quantity } = req.body;
     if (!Number.isInteger(quantity)) {
-      throw new Error("incorrect inputs - please input food as a strig and quantity as an int")
+      throw new Error("incorrect inputs - please input food as a strig and quantity as an int");
     }
     const info = JSON.stringify(await getNutrientData(food));
-    const name: any = info.match(food)
-    var calories: any = info.match('calories.+?[0-9]+')
-    calories = Number(calories.toString().slice(10))
-    const total_cals = quantity * calories
+    const name: any = info.match(food);
+    var calories: any = info.match('calories.+?[0-9]+');
+    calories = Number(calories.toString().slice(10));
+    const total_cals = quantity * calories;
     const information = {
       food_name: name.toString(),
       item_calories: calories,
@@ -194,6 +193,23 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/steps', async (req: Request, res: Response) => {
+  try {
+    const { activity } = req.body;
+    const stepsInformation: any = await getSteps(activity);
+    const first_activity = stepsInformation[0]
+    const second_activity = stepsInformation[1]
+    const third_activity = stepsInformation[2]
+    const information = {
+      first_activity: first_activity,
+      second_activity: second_activity,
+      third_activity: third_activity
+    }
+    return res.status(200).json(information)
+  } catch (error: any) {
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
 
 // PROFILE ROUTES
 app.put('/profile/name', authenticateToken, async (req: Request, res: Response) => {

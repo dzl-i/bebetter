@@ -1,7 +1,6 @@
-get http://localhost:3000/calculateCalorie
+get http://localhost:3000/steps
 content-type: application/json
 
 {
-    "food": 5,
-    "quantity": 4
+    "activity": "swimming"
 }
