@@ -20,6 +20,9 @@ import { retrieveUserPosts } from './profile/retrieveUserPosts';
 import { retrieveProfileInfo } from './profile/retrieveProfileInfo';
 import { updateProfileName } from './profile/updateProfileName';
 import { postCreate } from './posts/create';
+import { postDelete } from './posts/delete';
+import { postListAll } from './posts/listAll';
+import { postListUser } from './posts/listUser';
 
 const prisma = new PrismaClient()
 
@@ -95,6 +98,43 @@ app.post('/posts/create', authenticateToken, async (req: Request, res: Response)
     const post = await postCreate(userId, description, steps);
 
     res.status(200).json({ postId: post.id, description: post.description, steps: post.steps, timeCreated: post.timeCreated });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/posts/delete', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { postId } = req.body;
+    await postDelete(userId, postId);
+
+    res.status(200).json({ message: "Successfully deleted post!" });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/posts/list-all', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const posts = await postListAll(userId);
+
+    res.status(200).json({ posts: posts });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/posts/list-user', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const posts = await postListUser(userId);
+
+    res.status(200).json({ posts: posts });
   } catch (error: any) {
     console.error(error);
     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
