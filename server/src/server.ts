@@ -24,6 +24,7 @@ import { postListAll } from './posts/listAll';
 import { postListUser } from './posts/listUser';
 import { postComment } from './posts/comment';
 import { postReact } from './posts/react';
+import { postDetails } from './posts/detail';
 
 const prisma = new PrismaClient()
 
@@ -168,6 +169,18 @@ app.post('/posts/react', authenticateToken, async (req: Request, res: Response) 
   }
 });
 
+app.get('/posts/details', async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.query;
+    const post = await postDetails(postId as string);
+
+    res.status(200).json({ post: post });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
 
 // CALORIE ROUTES
 app.get('/calculate/calorie', async (req: Request, res: Response) => {
@@ -296,27 +309,32 @@ process.on('SIGINT', () => {
 async function authenticateToken(req: Request, res: Response, next: NextFunction) {
   const { token } = req.cookies;
 
-  if (!token) return res.status(401).json({ error: "No token provided." });
+  // if (!token) return res.status(401).json({ error: "No token provided." });
+  if (token === undefined) {
+    res.locals.userId = "";
+    next();
+  } else {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+      if (decoded && decoded.userId) {
+        const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-    if (decoded && decoded.userId) {
-      const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+        if (!user) {
+          return res.status(403).json({ error: "User not found." });
+        }
 
-      if (!user) {
-        return res.status(403).json({ error: "User not found." });
+        if (user.remainingLoginAttempts <= 0) {
+          return res.status(403).json({ error: "User is blocked." });
+        }
+
+        res.locals.userId = decoded.userId;
+        next();
+      } else {
+        res.status(403).json({ error: "Invalid token." });
       }
-
-      if (user.remainingLoginAttempts <= 0) {
-        return res.status(403).json({ error: "User is blocked." });
-      }
-
-      res.locals.userId = decoded.userId;
+    } catch (err) {
+      res.locals.userId = "";
       next();
-    } else {
-      res.status(403).json({ error: "Invalid token." });
     }
-  } catch (err) {
-    res.status(403).json({ error: "Invalid token." });
   }
 }
