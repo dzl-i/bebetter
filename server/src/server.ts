@@ -95,8 +95,8 @@ app.post('/auth/login', async (req: Request, res: Response) => {
 app.post('/posts/create', authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
-    const { description, steps } = req.body;
-    const post = await postCreate(userId, description, steps);
+    const { description, steps, picture } = req.body;
+    const post = await postCreate(userId, description, steps, picture);
 
     res.status(200).json({ postId: post.id, description: post.description, steps: post.steps, timeCreated: post.timeCreated });
   } catch (error: any) {
