@@ -296,27 +296,32 @@ process.on('SIGINT', () => {
 async function authenticateToken(req: Request, res: Response, next: NextFunction) {
   const { token } = req.cookies;
 
-  if (!token) return res.status(401).json({ error: "No token provided." });
+  // if (!token) return res.status(401).json({ error: "No token provided." });
+  if (token === undefined) {
+    res.locals.userId = "";
+    next();
+  } else {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+      if (decoded && decoded.userId) {
+        const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-    if (decoded && decoded.userId) {
-      const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+        if (!user) {
+          return res.status(403).json({ error: "User not found." });
+        }
 
-      if (!user) {
-        return res.status(403).json({ error: "User not found." });
+        if (user.remainingLoginAttempts <= 0) {
+          return res.status(403).json({ error: "User is blocked." });
+        }
+
+        res.locals.userId = decoded.userId;
+        next();
+      } else {
+        res.status(403).json({ error: "Invalid token." });
       }
-
-      if (user.remainingLoginAttempts <= 0) {
-        return res.status(403).json({ error: "User is blocked." });
-      }
-
-      res.locals.userId = decoded.userId;
+    } catch (err) {
+      res.locals.userId = "";
       next();
-    } else {
-      res.status(403).json({ error: "Invalid token." });
     }
-  } catch (err) {
-    res.status(403).json({ error: "Invalid token." });
   }
 }
