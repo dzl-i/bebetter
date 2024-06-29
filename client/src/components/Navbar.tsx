@@ -10,14 +10,19 @@ import { getCookie } from "cookies-next";
 
 const links = [
   {
+    path: "/calorie",
+    label: "Steps Calculator",
+    authRequired: false,
+  },
+  {
     path: "/create",
     label: "Make a new Post",
     authRequired: true,
   },
   {
-    path: "/calorie",
-    label: "Steps Calculator",
-    authRequired: false,
+    path: "/user",
+    label: "Profile",
+    authRequired: true,
   },
   {
     path: "/register",
@@ -29,20 +34,13 @@ const links = [
     label: "Login",
     authRequired: false,
   },
-  {
-    path: "/user",
-    label: "Profile",
-    authRequired: true,
-  },
 ];
 
 export default function Navbar() {
   const container = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const validLinks = getCookie("token")
-    ? links.filter(
-        (link) => !(link.path === "/login" || link.path === "/register")
-      )
+    ? links.slice(0, 3)
     : links.filter((link) => !link.authRequired);
 
   const tl = useRef<TimelineLite | null>(null);
