@@ -1,22 +1,25 @@
 // Server imports
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import errorHandler from 'middleware-http-errors';
 import cors from 'cors';
 import 'dotenv/config';
+import cookieParser from 'cookie-parser';
 import { PrismaClient } from '@prisma/client';
 import { Server } from 'http';
-import { getNutrientData } from './helper/converter';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 
 // Route imports
 import { authRegister } from './auth/register';
 import { authLogin } from './auth/login';
+import { getNutrientData } from './helper/converter';
 import { updateProfilePicture } from './profile/updateProfilePicture';
 import { updateProfileDescription } from './profile/updateProfileDescription';
 import { retrieveUserPosts } from './profile/retrieveUserPosts';
 import { retrieveProfileInfo } from './profile/retrieveProfileInfo';
 import { updateProfileName } from './profile/updateProfileName';
+import { postCreate } from './posts/create';
 
 const prisma = new PrismaClient()
 
@@ -24,6 +27,8 @@ const prisma = new PrismaClient()
 // Set up web app using JSON
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
 
 const httpServer = new Server(app);
 
@@ -81,6 +86,23 @@ app.post('/auth/login', async (req: Request, res: Response) => {
   }
 });
 
+
+// POSTS ROUTES
+app.post('/posts/create', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { description, steps } = req.body;
+    const post = await postCreate(userId, description, steps);
+
+    res.status(200).json({ postId: post.id, description: post.description, steps: post.steps, timeCreated: post.timeCreated });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+
+// CALORIE ROUTES
 app.get('/calculateCalorie', async (req: Request, res: Response) => {
   try {
     const { food, quantity } = req.body;
@@ -96,7 +118,7 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
       food_name: name.toString(),
       item_calories: calories,
       quantity: quantity,
-      total_calories:  total_cals
+      total_calories: total_cals
     }
     return res.status(200).json(information);
   } catch (error: any) {
@@ -106,7 +128,7 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
 
 
 // PROFILE ROUTES
-app.post('/profile/name', async (req: Request, res:Response) => {
+app.post('/profile/name', async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
     const { name } = req.body;
@@ -119,7 +141,7 @@ app.post('/profile/name', async (req: Request, res:Response) => {
   }
 });
 
-app.post('/profile/picture', async (req: Request, res:Response) => {
+app.post('/profile/picture', async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
     const { profilePicture } = req.body;
@@ -132,7 +154,7 @@ app.post('/profile/picture', async (req: Request, res:Response) => {
   }
 });
 
-app.post('/profile/description', async (req: Request, res:Response) => {
+app.post('/profile/description', async (req: Request, res: Response) => {
   try {
     const userId = res.locals.userId;
     const { description } = req.body;
@@ -145,7 +167,7 @@ app.post('/profile/description', async (req: Request, res:Response) => {
   }
 });
 
-app.get('/profile/posts', async (req: Request, res:Response) => {
+app.get('/profile/posts', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
     const posts = await retrieveUserPosts(userId as string);
@@ -157,7 +179,7 @@ app.get('/profile/posts', async (req: Request, res:Response) => {
   }
 });
 
-app.get('/profile/info', async (req: Request, res:Response) => {
+app.get('/profile/info', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
     const profileInfo = retrieveProfileInfo(userId as string);
@@ -168,6 +190,7 @@ app.get('/profile/info', async (req: Request, res:Response) => {
     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
   }
 });
+
 
 // Logging errors
 app.use(morgan('dev'));
@@ -183,3 +206,33 @@ const server = httpServer.listen(PORT, () => {
 process.on('SIGINT', () => {
   server.close(() => console.log('Shutting down server gracefully.'));
 });
+
+
+/* ---------------------------- HELPER FUNCTIONS ---------------------------- */
+async function authenticateToken(req: Request, res: Response, next: NextFunction) {
+  const { token } = req.cookies;
+
+  if (!token) return res.status(401).json({ error: "No token provided." });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    if (decoded && decoded.userId) {
+      const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+
+      if (!user) {
+        return res.status(403).json({ error: "User not found." });
+      }
+
+      if (user.remainingLoginAttempts <= 0) {
+        return res.status(403).json({ error: "User is blocked." });
+      }
+
+      res.locals.userId = decoded.userId;
+      next();
+    } else {
+      res.status(403).json({ error: "Invalid token." });
+    }
+  } catch (err) {
+    res.status(403).json({ error: "Invalid token." });
+  }
+}
