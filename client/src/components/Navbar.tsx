@@ -39,9 +39,6 @@ const links = [
 export default function Navbar() {
   const container = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const validLinks = getCookie("token")
-    ? links.slice(0, 3)
-    : links.filter((link) => !link.authRequired);
 
   const tl = useRef<TimelineLite | null>(null);
 
@@ -112,7 +109,7 @@ export default function Navbar() {
 
         <div className="menu-copy">
           <div className="md:space-y-6 space-y-8">
-            {validLinks.map((link, index) => (
+            {links.map((link, index) => (
               <div key={index} className="menu-link-item">
                 <div
                   className="menu-link-item-holder relative"
