@@ -12,10 +12,12 @@
     "@gsap/react": "^2.1.1",
     "@types/gsap": "^3.0.0",
     "chart.js": "^4.4.3",
+    "cookies-next": "^4.2.1",
     "lucide-react": "^0.399.0",
     "next": "14.2.4",
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18",
     "validator": "^13.12.0"
   },

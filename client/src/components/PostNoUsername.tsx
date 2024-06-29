@@ -1,26 +1,10 @@
 import { PostType } from "@/utils/types";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
-export default function Post({ post }: { post: PostType }) {
+export default function PostNoUsername({ post }: { post: PostType }) {
   return (
     <div className="block text-black space-y-4 w-full min-w-[320px] bg-white rounded-lg px-7 py-6 border border-black shadow-[2px_2px_0_rgb(0,_0,_0)] transition-all duration-200 hover:shadow-[4px_4px_0_rgb(0,_0,_0)]">
-      <Link
-        href={`/user/${post.author.id}`}
-        className="flex items-center gap-4"
-      >
-        <img
-          className="rounded-full object-cover"
-          src={post.author.profilePicture}
-          alt={`${post.author.name} profile picture`}
-          width={48}
-          height={48}
-        />
-        <div>
-          <p className="font-bold">{post.author.name}</p>
-          <p>{post.author.username}</p>
-        </div>
-      </Link>
       <Link href={`/post/${post.id}`} className="block space-y-4">
         <p>{post.description}</p>
         {post.picture && (

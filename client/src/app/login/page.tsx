@@ -29,6 +29,7 @@ export default function Login() {
     console.log(res);
     setLoading(false);
     if (!res.errorCode) {
+      localStorage.setItem("userId", res.userId);
       router.push("/");
       return;
     }

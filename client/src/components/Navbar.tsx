@@ -6,41 +6,48 @@ import { gsap, TimelineLite } from "gsap";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { getCookie } from "cookies-next";
 
 const links = [
   {
     path: "/create",
     label: "Make a new Post",
+    authRequired: true,
   },
   {
     path: "/calorie",
     label: "Steps Calculator",
+    authRequired: false,
   },
   {
     path: "/register",
     label: "Register",
+    authRequired: false,
   },
   {
     path: "/login",
     label: "Login",
+    authRequired: false,
   },
   {
     path: "/user",
     label: "Profile",
+    authRequired: true,
   },
 ];
 
 export default function Navbar() {
   const container = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const validLinks = getCookie("token")
+    ? links.filter(
+        (link) => !(link.path === "/login" || link.path === "/register")
+      )
+    : links.filter((link) => !link.authRequired);
 
   const tl = useRef<TimelineLite | null>(null);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const { contextSafe } = useGSAP(
+  useGSAP(
     () => {
       gsap.set(".menu-link-item-holder", { y: 75 });
       tl.current = gsap
@@ -75,7 +82,7 @@ export default function Navbar() {
       <div className="fixed top-0 left-0 w-full p-8 z-1">
         <div className="flex justify-between items-center bg-white text-black px-6 py-4 rounded-2xl border border-black shadow-[2px_2px_0_0_rgba(0,_0,_0)]">
           <Link href="/" className="flex items-center gap-2 ">
-            <Image src="logo.svg" alt="Logo" width={48} height={48} />
+            <Image src="/logo.svg" alt="Logo" width={48} height={48} />
             <p className="font-bold text-xl">BeBetter</p>
           </Link>
           <button
@@ -92,7 +99,7 @@ export default function Navbar() {
         <div className="fixed top-0 left-0 w-full p-8 z-1">
           <div className="flex justify-between items-center px-6 py-4 ">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="logo.svg" alt="Logo" width={48} height={48} />
+              <Image src="/logo.svg" alt="Logo" width={48} height={48} />
               <p className="font-bold text-xl text-main">BeBetter</p>
             </Link>
             <button
@@ -107,7 +114,7 @@ export default function Navbar() {
 
         <div className="menu-copy">
           <div className="md:space-y-6 space-y-8">
-            {links.map((link, index) => (
+            {validLinks.map((link, index) => (
               <div key={index} className="menu-link-item">
                 <div
                   className="menu-link-item-holder relative"

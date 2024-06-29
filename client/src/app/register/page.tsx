@@ -32,6 +32,7 @@ export default function Register() {
     });
     setLoading(false);
     if (!res.errorCode) {
+      localStorage.setItem("userId", res.userId);
       router.push("/");
       return;
     }

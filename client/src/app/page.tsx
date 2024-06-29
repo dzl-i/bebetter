@@ -43,13 +43,19 @@ export default function Home() {
       {loading ? (
         <Loading />
       ) : (
-        <div ref={container} className="w-[calc(100vw_-_4rem)] masonry-layout">
-          {posts.map((post: any, index) => (
-            <div className="post-card" key={index}>
-              <Post key={index} post={post} />
-            </div>
-          ))}
-        </div>
+        <>
+          <div
+            ref={container}
+            className="w-[calc(100vw_-_4rem)] masonry-layout"
+          >
+            {posts.map((post: any, index) => (
+              <div className="post-card" key={index}>
+                <Post key={index} post={post} />
+              </div>
+            ))}
+          </div>
+          <p className="text-center">No more posts to show</p>
+        </>
       )}
     </>
   );

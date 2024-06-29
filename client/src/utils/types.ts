@@ -1,6 +1,16 @@
 export type ReactType = {};
 
-export type CommentType = {};
+export type CommentType = {
+    id: string,
+    comment: string,
+    timeCreated: string,
+    user: {
+        id: string,
+        name: string,
+        username: string,
+        profilePicture: string
+    }
+};
 
 export type PostType = {
   author: {
@@ -23,5 +33,7 @@ export type ProfileInfoType = {
     profilePicture: string,
     username: string,
     name: string,
-    description: string | null
+    description: string | null,
+    averageSteps: number,
+    recentSteps: number[],
 }

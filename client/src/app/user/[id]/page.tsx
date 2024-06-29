@@ -1,18 +1,14 @@
 import BarChart from "@/components/BarChart";
-import Post from "@/components/Post";
+import Error from "@/components/Error";
+import PostNoUsername from "@/components/PostNoUsername";
 import { get } from "@/utils/request";
 import { PostType } from "@/utils/types";
-import { profile } from "console";
 
 export default async function UserPage({ params }: { params: { id: string } }) {
   const { profileInfo } = await get(`/profile/info?userId=${params.id}`);
   const { posts } = await get(`/profile/posts?userId=${params.id}`);
 
-  console.log(params.id);
-  console.log(profileInfo);
-  console.log(posts);
-
-  //   if (profileInfo === {}) return <Error message="User not found" />;
+  if (!profileInfo) return <Error message="User not found" />;
 
   return (
     <div className="text-black flex flex-col md:flex-row gap-8">
@@ -34,7 +30,7 @@ export default async function UserPage({ params }: { params: { id: string } }) {
             <div className="space-y-1">
               <p className="font-bold">Average</p>
               <p className="px-4 py-2 bg-white rounded-2xl text-lg w-fit mx-auto">
-                3,000 steps a day
+                {profileInfo.averageSteps ? profileInfo.averageSteps : "N/A"}
               </p>
             </div>
           </div>
@@ -43,11 +39,10 @@ export default async function UserPage({ params }: { params: { id: string } }) {
           <h2 className="text-xl font-bold">Recent steps</h2>
           <div className="flex-1">
             <BarChart
-              labels={["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"]}
               datasets={[
                 {
                   label: "Number of steps",
-                  data: [1000, 4000, 10000, 20000, 5000, 60000, 80000],
+                  data: profileInfo.recentSteps,
                   backgroundColor: "#ffffff",
                 },
               ]}
@@ -58,10 +53,10 @@ export default async function UserPage({ params }: { params: { id: string } }) {
       <div className="flex-1">
         <h2 className="text-xl font-bold mb-2">Recent archives</h2>
         <div className="masonry-layout">
-          {posts && posts.length ? (
+          {posts.posts && posts.posts.length ? (
             <>
-              {posts.map((post: PostType, index: number) => (
-                <Post key={index} post={post} />
+              {posts.posts.map((post: PostType, index: number) => (
+                <PostNoUsername key={index} post={post} />
               ))}
             </>
           ) : (
