@@ -16,6 +16,7 @@ import { updateProfilePicture } from './profile/updateProfilePicture';
 import { updateProfileDescription } from './profile/updateProfileDescription';
 import { retrieveUserPosts } from './profile/retrieveUserPosts';
 import { retrieveProfileInfo } from './profile/retrieveProfileInfo';
+import { updateProfileName } from './profile/updateProfileName';
 
 const prisma = new PrismaClient()
 
@@ -105,7 +106,20 @@ app.get('/calculateCalorie', async (req: Request, res: Response) => {
 
 
 // PROFILE ROUTES
-app.post('/profile/profile-picture', async (req: Request, res:Response) => {
+app.post('/profile/name', async (req: Request, res:Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { name } = req.body;
+    await updateProfileName(userId, name);
+
+    res.status(200);
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.post('/profile/picture', async (req: Request, res:Response) => {
   try {
     const userId = res.locals.userId;
     const { profilePicture } = req.body;
