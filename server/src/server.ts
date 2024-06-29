@@ -87,18 +87,18 @@ app.post('/auth/login', async (req: Request, res: Response) => {
 
 
 // POSTS ROUTES
-// app.post('/posts/create', authenticateToken, async (req: Request, res: Response) => {
-//   try {
-//     const userId = res.locals.userId;
-//     const { description, steps } = req.body;
-//     const post = await postCreate(userId, description, steps);
+app.post('/posts/create', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId;
+    const { description, steps } = req.body;
+    const post = await postCreate(userId, description, steps);
 
-//     res.status(200).json({ postId: post.id, description: post.description, steps: post.steps, timeCreated: post.timeCreated });
-//   } catch (error: any) {
-//     console.error(error);
-//     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
-//   }
-// });
+    res.status(200).json({ postId: post.id, description: post.description, steps: post.steps, timeCreated: post.timeCreated });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
 
 
 // CALORIE ROUTES
