@@ -24,6 +24,7 @@ import { postListAll } from './posts/listAll';
 import { postListUser } from './posts/listUser';
 import { postComment } from './posts/comment';
 import { postReact } from './posts/react';
+import { postDetails } from './posts/detail';
 
 const prisma = new PrismaClient()
 
@@ -162,6 +163,18 @@ app.post('/posts/react', authenticateToken, async (req: Request, res: Response) 
     await postReact(userId, postId, reactName);
 
     res.status(200).json({ message: "Successfully added a reaction!" });
+  } catch (error: any) {
+    console.error(error);
+    res.status(error.status || 500).json({ error: error.message || "An error occurred." });
+  }
+});
+
+app.get('/posts/details', async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.query;
+    const post = await postDetails(postId as string);
+
+    res.status(200).json({ post: post });
   } catch (error: any) {
     console.error(error);
     res.status(error.status || 500).json({ error: error.message || "An error occurred." });
