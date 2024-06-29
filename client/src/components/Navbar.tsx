@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const links = [
   {
-    path: "/post",
+    path: "/create",
     label: "Make a new Post",
   },
   {

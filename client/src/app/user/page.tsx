@@ -18,7 +18,7 @@ export default function User() {
   ];
   return (
     <div className="text-black flex flex-col md:flex-row gap-8">
-      <div className="flex-1 flex flex-col space-y-4 md:h-[calc(100vh_-_13rem)]">
+      <div className="flex-1 flex flex-col space-y-4 top-32 static md:max-h-[calc(100vh_-_13rem)] overflow-y-scroll no-scrollbar md:sticky">
         <div className="flex flex-wrap justify-center items-center gap-8">
           <Image
             alt="Profile picture"
@@ -61,15 +61,13 @@ export default function User() {
         </div>
       </div>
       <div className="flex-1">
-        <h2 className="text-xl font-bold">Recent archives</h2>
-        <div className="md:overflow-y-scroll md:max-h-[calc(100vh_-_13rem)]">
-          <div className="masonry-layout">
-            {postArr.map((show, index) => (
-              <div key={index}>
-                <Post key={index} showImage={show ? true : false} />
-              </div>
-            ))}
-          </div>
+        <h2 className="text-xl font-bold mb-2">Recent archives</h2>
+        <div className="masonry-layout">
+          {postArr.map((show, index) => (
+            <div key={index}>
+              <Post key={index} showImage={show ? true : false} />
+            </div>
+          ))}
         </div>
       </div>
     </div>
