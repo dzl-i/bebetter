@@ -92,7 +92,7 @@ export default function Login() {
         </button>
       </form>
       <p>
-        Don't have an account?{" "}
+        Dont have an account?{" "}
         <Link className="underline" href="/login">
           Register
         </Link>

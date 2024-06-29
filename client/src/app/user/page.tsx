@@ -2,22 +2,20 @@
 
 import BarChart from "@/components/BarChart";
 import Error from "@/components/Error";
-import Image from "next/image";
 import { get } from "@/utils/request";
 import { PostType, ProfileInfoType } from "@/utils/types";
 import { getCookie } from "cookies-next";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import PostNoUsername from "@/components/PostNoUsername";
 
 export default function User() {
-  const userId = localStorage.getItem("userId");
   const [data, setData] = useState<{
     profileInfo: ProfileInfoType;
     posts: PostType[];
   }>();
 
   useEffect(() => {
+    const userId = localStorage.getItem("userId") as string;
     const getData = async () => {
       const { profileInfo } = await get(`/profile/info?userId=${userId}`);
       const { posts } = await get(`/profile/posts?userId=${userId}`);

@@ -272,7 +272,7 @@ export default function Calorie() {
                 <p className="text-center text-sm uppercase">Burned Calories</p>
               </div>
               {data.activities.map((activity, index) => (
-                <div className="space-y-2">
+                <div key={index} className="space-y-2">
                   <div key={index} className="flex gap-2 justify-between">
                     <p className="text-sm truncate block">{activity.name}</p>
                     <p className="text-sm">{activity.calories_per_hour} / hr</p>
