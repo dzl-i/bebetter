@@ -25,7 +25,13 @@ export default function Home() {
 
   useEffect(() => {
     const getPosts = async () => {
-      const res = await get("/posts/list-all");
+      const res = await fetch(`http://localhost:3030/posts/list-all`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       console.log(res);
       setLoading(false);
     };
