@@ -45,7 +45,7 @@ app.use(cors({
 }));
 
 const PORT: number = parseInt(process.env.PORT || '3030');
-const isProduction: boolean = process.env.NODE_ENV === "production"
+const isProduction: boolean = false;
 
 
 // HEALTH CHECK ROUTE
@@ -187,7 +187,7 @@ app.post('/calculate/calorie', async (req: Request, res: Response) => {
   try {
     const { food, quantity } = req.body;
     if (!Number.isInteger(quantity)) {
-      return res.status(400).json({ message: "incorrect inputs - please input food as a strig and quantity as an int"});
+      return res.status(400).json({ message: "incorrect inputs - please input food as a strig and quantity as an int" });
     }
     const info = JSON.stringify(await getNutrientData(food));
     const name: any = info.match(food);
