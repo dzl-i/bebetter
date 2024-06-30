@@ -45,7 +45,7 @@ export default function Create() {
     alert(res.errorMessage);
   };
 
-  if (!localStorage.getItem("token"))
+  if (!getCookie("token"))
     return <Error message="Please login to access this page" />;
   return (
     <div className="relative h-full flex flex-col justify-center items-center gap-4 description-black">
