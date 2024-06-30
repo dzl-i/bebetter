@@ -26,7 +26,7 @@ export default function User() {
 
   return (
     <>
-      {getCookie("token") ? (
+      {localStorage.getItem("token") ? (
         <>
           {data && (
             <div className="text-black flex flex-col md:flex-row gap-8">

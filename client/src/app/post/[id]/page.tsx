@@ -15,7 +15,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
   console.log(post.comments);
 
-  const cookie = cookies().get("token")?.value;
+  const cookie = localStorage.getItem("token");
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
