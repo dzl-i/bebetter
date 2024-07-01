@@ -39,6 +39,7 @@ export default async function UserPage({ params }: { params: { id: string } }) {
           <h2 className="text-xl font-bold">Recent steps</h2>
           <div className="flex-1">
             <BarChart
+              labels={["1", "2", "3", "4", "5", "6", "7"]}
               datasets={[
                 {
                   label: "Number of steps",
