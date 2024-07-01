@@ -27,16 +27,14 @@ export default function Home() {
 
   useEffect(() => {
     const getPosts = async () => {
+      setLoading(true);
       const { posts: fetchedPosts } = await get("/posts/list-all");
+      console.log(fetchedPosts);
       setPosts(fetchedPosts);
+      setLoading(false);
     };
     getPosts();
   }, []);
-
-  useEffect(() => {
-    if (!posts) return;
-    setLoading(false);
-  }, [posts]);
 
   return (
     <>

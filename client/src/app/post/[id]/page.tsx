@@ -35,13 +35,15 @@ export default async function PostPage({ params }: { params: { id: string } }) {
             </div>
           </div>
           <p>{post.description}</p>
-          <img
-            alt={`${post.author.name} post image`}
-            src={post.picture as string}
-            width={320}
-            height={180}
-            className="w-full h-auto rounded-md object-cover"
-          />
+          {post.picture && (
+            <img
+              alt={`${post.author.name} post image`}
+              src={post.picture as string}
+              width={320}
+              height={180}
+              className="w-full h-auto rounded-md object-cover"
+            />
+          )}
           <p className="text-sm opacity-50">
             {new Date(post.timeCreated).toLocaleDateString()}
           </p>

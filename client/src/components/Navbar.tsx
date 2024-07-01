@@ -6,7 +6,6 @@ import { gsap, TimelineLite } from "gsap";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getCookie } from "cookies-next";
 
 const links = [
   {

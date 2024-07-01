@@ -284,13 +284,13 @@ export default function Calorie() {
                         (quantity * data.unitCalories) /
                         activity.calories_per_hour
                       ).toFixed(2)}{" "}
-                      hour /{" "}
+                      hour(s) /{" "}
                       {(
                         ((quantity * data.unitCalories) /
                           activity.calories_per_hour) *
                         60
                       ).toFixed(2)}{" "}
-                      mins
+                      min(s)
                     </b>
                   </p>
                   <hr />

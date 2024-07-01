@@ -32,6 +32,7 @@ export default function Post({ post }: { post: PostType }) {
             className="w-full h-auto rounded-md object-cover"
           />
         )}
+        <p>Steps taken: {post.steps}</p>
         <p className="text-sm opacity-50">
           {new Date(post.timeCreated).toLocaleDateString()}
         </p>
